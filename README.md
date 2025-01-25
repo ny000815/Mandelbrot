@@ -6,6 +6,8 @@
 
 ```
 c++ mandelbrot.cpp -o mandelbrot.out
+```
+```
 ./mandelbrot.out
 ```
 
