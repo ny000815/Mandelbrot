@@ -1,53 +1,28 @@
 #include <iostream>
 #include <complex>
-#include <string>
-#include <cmath>
-
-static std::string ansi256(int c) {
-    return "\033[38;5;" + std::to_string(c) + "m";
-}
-
-static std::string reset() {
-    return "\033[0m";
-}
 
 int main() {
-    int width = 160;
-    int height = 40;
-    double x_min = -2.5;
-    double x_max = 1.5;
-    double y_min = -1.5;
-    double y_max = 1.5;
-    int max_iter = 2000;
-    double escape_radius = 2.0;
+    int w = 90, h = 45, max_iter = 300;  // 3x bigger than the original
+    std::string grad = " .:-=+*#%@";
 
-    for (int py = 0; py < height; ++py) {
-        double y = y_min + (y_max - y_min) * (static_cast<double>(py) / height);
-        for (int px = 0; px < width; ++px) {
-            double x = x_min + (x_max - x_min) * (static_cast<double>(px) / width);
-
-            std::complex<double> z(0.0, 0.0);
-            std::complex<double> c(x, y);
-
+    for (int iy = 0; iy < h; iy++) {
+        double y = (iy - h / 2.0) / (h / 4.0);
+        for (int ix = 0; ix < w; ix++) {
+            double x = (ix - w / 2.0) / (w / 4.0);
+            std::complex<double> c(x, y), z(0, 0);
             int iter = 0;
-            while (std::abs(z) <= escape_radius && iter < max_iter) {
+            while (iter < max_iter && std::abs(z) <= 2.0) {
                 z = z * z + c;
                 iter++;
             }
-
             if (iter == max_iter) {
-                std::cout << ansi256(0) << "█";  
+                std::cout << grad.back();
             } else {
-                int color_idx = 16 + static_cast<int>(
-                    (static_cast<double>(iter) / max_iter) * (231 - 16)
-                );
-                std::cout << ansi256(color_idx) << "█";
+                int idx = iter * grad.size() / max_iter;
+                std::cout << grad[idx];
             }
         }
-        std::cout << reset() << "\n";
+        std::cout << "\n";
     }
-
-    std::cout << reset();
-    return 0;
 }
 
